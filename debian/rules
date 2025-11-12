@@ -1,0 +1,19 @@
+#! /usr/bin/make -f
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+progname = turnkey-pypy2
+buildroot = debian/$(progname)
+
+deproot = $(progname)/deproot
+tmp = debian/tmp
+
+%:
+	dh $@
+
+execute_before_dh_clean:
+	# dh_clean will clean all other build files (in debian/tmp)
+	rm -rf lib/deps
+
+override_dh_auto_build:
+	./pypy-build.sh

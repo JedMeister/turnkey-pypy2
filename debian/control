@@ -1,0 +1,29 @@
+# NOTE: building this source package requires an internet
+#       connection as it downloads a prebuilt release of
+#       pypy as a build dependency
+Source: turnkey-pypy2
+Section: misc
+Priority: optional
+Maintainer: Jeremy Davis <jeremy@turnkeylinux.org>
+Build-Depends:
+ debhelper (>= 10),
+ gcc,
+ libffi-dev,
+ pkgconf,
+ libexpat1-dev,
+ zlib1g-dev,
+ libncurses-dev,
+ libbz2-dev,
+ libssl-dev,
+ libsqlite3-dev,
+ libgdbm-dev,
+Homepage: https://pypy.org/
+Vcs-Browser: https://github.com/turnkeylinux/turnkey-pypy2
+Vcs-Git: https://github.com/turnkeylinux/turnkey-pypy2.git
+Standards-Version: 4.0.0
+
+Package: turnkey-pypy2
+Architecture: any
+Depends:
+ ${misc:Depends},
+Description: Pypy2 python runtime for use by TKLBAM
