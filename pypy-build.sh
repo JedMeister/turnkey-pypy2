@@ -1,16 +1,15 @@
+#!/bin/bash -eu
+
+source pypy-versions.txt
+# Provides:
+# PYPY_MAJOR_VERSION
+# PYPY_BUILD_DEP_VERSION
+
 PYPY_REPO="https://github.com/pypy/pypy"
-PYPY_BRANCH="release-pypy2.7-v7.x"
-PYPY_RELEASE_URL="https://downloads.python.org/pypy/pypy2.7-v7.3.20-linux64.tar.bz2"
+PYPY_BRANCH="release-pypy2.7-v${PYPY_MAJOR_VERSION}.x"
 
-REQUIRED_LIBS=("gcc" "libffi-dev" "pkgconf" "libexpat1-dev" "zlib1g-dev" "libncurses-dev" "libbz2-dev" "libssl-dev" "libsqlite3-dev" "libgdbm-dev")
-
-for pkg in "${REQUIRED_LIBS[@]}"; do
-  if ! dpkg -s "$pkg" &>/dev/null; then
-    echo "pkg not installed: $pkg" >&2
-    exit 1
-  fi
-done
-echo "all required dev packages installed"
+PYPY_URL="https://downloads.python.org/pypy"
+PYPY_RELEASE_URL="${PYPY_URL}/pypy2.7-v${PYPY_BUILD_DEP_VERSION}-linux64.tar.bz2"
 
 mkdir "pypy-build"
 cd "pypy-build"
@@ -29,29 +28,27 @@ cd "$PYPY_SRC"
 git submodule update --init --recursive --depth=1
 cd "pypy/goal"
 
-# --gc=incminimark here is required for the cpyext (or whatever it is, the thing required for linking C against it) to work.
+PYPY="${PYPY_BIN}/bin/pypy"
+
+# --gc=incminimark here is required for the cpyext (or whatever it is, the
+#   thing required for linking C against it) to work.
 #
 # this will error on tkinter, but it's fine, it will do everything it needs too
-"${PYPY_BIN}/bin/pypy" ../../rpython/bin/rpython --gc=incminimark -Osize targetpypystandalone
+"${PYPY}" ../../rpython/bin/rpython --gc=incminimark -Osize targetpypystandalone
 
 cd "${PYPY_SRC}/pypy/tool/release"
 rm -rf /tmp/pypy-build
 mkdir /tmp/pypy-build
 
-"${PYPY_BIN}/bin/pypy" package.py --without-_tkinter --no-keep-debug --archive-name pypy-turnkeylinux --builddir /tmp/pypy-build
+"${PYPY}" package.py \
+    --without-_tkinter \
+    --no-keep-debug \
+    --archive-name pypy-turnkeylinux \
+    --builddir /tmp/pypy-build
 
 find "/tmp/pypy-build" -type f -iname '*.so' -exec strip -s {} \;
-find "/tmp/pypy-build" -type f -iname '*.so' -exec upx --best {} \;
+find "/tmp/pypy-build" -type f -iname '*.so' -exec upx-ucl --best {} \;
 
-# result is "/tmp/pypy-build/pypy-turnkeylinux" there is a .tar.bz2 file there I forgot to remove
-# but that DOES NOT include the stripped & packed binaries, use the raw dir tree instead
-
-#1. get pypy src (if getting from git, this has required submodules)
-#2. get pypy bin
-#3. install gcc libffi-dev pkgconf libexpat1-dev zlib1g-devA libncurses5-dev libbz2-dev libssl-dev libsqlite3-dev libgdbm-dev
-#4. ``cd ${pypy_src}/pypy/goal``
-#5. ``$(pypy_bin_path) ../../rpython/bin/rpython --gc=incminimark -Osize targetpypystandalone``
-#6. ``strip -s libpypy-c.so``
-#7. ``upx --best libpypy-c.so``
-#8. ``cd ${pypy_src}/pypy/tool/release``
-#9. ``$(pypy_bin_path) package.py --without-_tkinter --no-keep-debug --archive-name pypy-turnkeylinux``
+# result is "/tmp/pypy-build/pypy-turnkeylinux" there is a .tar.bz2 file there
+# I forgot to remove but that DOES NOT include the stripped & packed binaries,
+# use the raw dir tree instead

@@ -1,0 +1,7 @@
+# update these values as required
+
+# pypy2.7 major release version to download, compile and include in package.
+export PYPY_MAJOR_VERSION="7"
+
+# precompiled pypy2.7 release to download & use as a build dependency
+export PYPY_BUILD_DEP_VERSION="7.3.20"

@@ -17,6 +17,8 @@ Build-Depends:
  libssl-dev,
  libsqlite3-dev,
  libgdbm-dev,
+ binutils,
+ upx-ucl,
 Homepage: https://pypy.org/
 Vcs-Browser: https://github.com/turnkeylinux/turnkey-pypy2
 Vcs-Git: https://github.com/turnkeylinux/turnkey-pypy2.git
