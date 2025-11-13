@@ -21,7 +21,7 @@ PYPY_BIN="${BUILD_ROOT}/pypy-bin"
 [[ -d "$PYPY_SRC" ]] \
     || git clone --depth=1 "${PYPY_REPO}" -b "${PYPY_BRANCH}" pypy-src
 
-[[ -f pypy-bin.tar.bz2 ]] || wget "$PYPY_RELEASE_URL" -O pypy-bin.tar.bz2
+[[ -f pypy-bin.tar.bz2 ]] || curl "$PYPY_RELEASE_URL" -o pypy-bin.tar.bz2
 
 [[ -d pypy-bin ]] || tar -xvf pypy-bin.tar.bz2 && mv pypy2.7-* pypy-bin
 
