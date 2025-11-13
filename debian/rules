@@ -13,9 +13,10 @@ tmp = debian/tmp
 
 execute_before_dh_clean:
 	# dh_clean will clean all other build files (in debian/tmp)
-	rm -r pypy-src
-	rm -r pypy-bin
-	rm pypy-bin.tar.bz2
+	#rm -r pypy-src
+	#rm -r pypy-bin
+	#rm pypy-bin.tar.bz2
 
 override_dh_auto_build:
 	./pypy-build.sh
+	exit 1
