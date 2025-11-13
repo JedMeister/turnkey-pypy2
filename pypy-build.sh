@@ -18,10 +18,7 @@ PYPY_SRC="${BUILD_ROOT}/pypy-src"
 PYPY_BIN="${BUILD_ROOT}/pypy-bin"
 PYPY_BUILD="${BUILD_ROOT}/pypy-build"
 
-mkdir "$BUILD_ROOT"
-mkdir "$PYPY_BUILD"
-cd "$BUILD_ROOT"
-
+echo "### Cloning and verifying source"
 git clone --depth=1 "${PYPY_REPO}" -b "${PYPY_BRANCH}" pypy-src
 read -r local_commit_id < src-commit-id.txt
 
@@ -31,6 +28,7 @@ if [[ "$local_commit_id" != "$cloned_commit_id" ]]; then
     exit 1
 fi
 
+echo "### Downloading and verifying pre-built binary archive"
 curl "$PYPY_RELEASE_URL" -o pypy-bin.tar.bz2
 read -ra local_checksum < checksum.txt
 read -ra dl_checksum <<<"$(sha256sum pypy-bin.tar.bz2)"
@@ -39,9 +37,9 @@ if [[ "${local_checksum[*]}" != "${dl_checksum[*]}" ]]; then
     exit 1
 fi
 
-tar -xvf pypy-bin.tar.bz2
+echo "### Unpacking pre-built archive & cloning submodules"
+tar -xf pypy-bin.tar.bz2
 mv pypy2.7-* pypy-bin
-rm pypy-bin.tar.bz2
 
 cd "$PYPY_SRC"
 git submodule update --init --recursive --depth=1
@@ -68,10 +66,9 @@ mkdir "$PYPY_BUILD"
     --archive-name "$PACKAGE" \
     --builddir "$PYPY_BUILD"
 
+# note: tklbam-pypy2.tar.bz2 can be discarded
 echo "### Minimizing so files"
-find "$PYPY_BUILD" -type f -iname '*.so' -exec strip -s {} \;
-find "$PYPY_BUILD" -type f -iname '*.so' -exec upx-ucl --best {} \;
+find "$PYPY_BUILD/$PACKAGE" -type f -iname '*.so' -exec strip -s {} \;
+find "$PYPY_BUILD/$PACKAGE" -type f -iname '*.so' -exec upx-ucl --best {} \;
 
-# result is "/tmp/pypy-build/pypy-turnkeylinux" there is a .tar.bz2 file there
-# I forgot to remove but that DOES NOT include the stripped & packed binaries,
-# use the raw dir tree instead
+echo "### Done"
