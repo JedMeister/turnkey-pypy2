@@ -45,7 +45,11 @@ cd "$PYPY_SRC"
 git submodule update --init --recursive --depth=1
 cd "pypy/goal"
 
-echo "### Building Pypy - stage 1"
+cat <<EOF
+###############################
+### Building Pypy - stage 1 ###
+###############################
+EOF
 PYPY="${PYPY_BIN}/bin/pypy"
 
 # --gc=incminimark here is required for the cpyext (or whatever it is, the
@@ -58,7 +62,11 @@ PYPY="${PYPY_BIN}/bin/pypy"
 
 cd "${PYPY_SRC}/pypy/tool/release"
 
-echo "### Building Pypy - stage 2"
+cat <<EOF
+###############################
+### Building Pypy - stage 2 ###
+###############################
+EOF
 mkdir "$PYPY_BUILD"
 "${PYPY}" package.py \
     --without-_tkinter \
@@ -71,4 +79,4 @@ echo "### Minimizing so files"
 find "$PYPY_BUILD/$PACKAGE" -type f -iname '*.so' -exec strip -s {} \;
 find "$PYPY_BUILD/$PACKAGE" -type f -iname '*.so' -exec upx-ucl --best {} \;
 
-echo "### Done"
+echo "### Full build completed successfully"
