@@ -28,5 +28,28 @@ Standards-Version: 4.0.0
 Package: turnkey-pypy2
 Architecture: any
 Depends:
+ libssl3t64,
  ${misc:Depends},
-Description: Pypy2 python runtime for use by TKLBAM
+Breaks: turnkey-pypy2-full
+Replaces: turnkey-pypy2-full
+Description: Pypy2 python runtime for use by TKLBAM (trimmed)
+ A "trimmed" version of the pypy2 runtime for TKLBAM. This should
+ provide full TKLBAM functionality.
+ .
+ If TKLBAM problems arise please install 'turnkey-pypy2-full' and
+ retry. Please report TKLBAM issues to TurnKey Linux regardless.
+
+Package: turnkey-pypy2-full
+Architecture: any
+Depends:
+ libssl3t64,
+ ${misc:Depends},
+Breaks: turnkey-pypy2
+Replaces: turnkey-pypy2
+Description: Pypy2 python runtime for use by TKLBAM (full)
+ The "full" version of the pypy2 runtime for TKLBAM. This package
+ should not be required and is only provided in case edge case
+ tklbam issues occur using the "trimmed" 'turnkey-pypy2' package.
+ .
+ If TKLBAM does not function properly without this package, please
+ report to TurnKey.
