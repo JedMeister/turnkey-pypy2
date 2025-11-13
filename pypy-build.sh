@@ -24,6 +24,7 @@ cd "$BUILD_ROOT"
 
 git clone --depth=1 "${PYPY_REPO}" -b "${PYPY_BRANCH}" pypy-src
 read -r local_commit_id < src-commit-id.txt
+
 cloned_commit_id=$(git --git-dir=pypy-src/.git rev-parse HEAD)
 if [[ "$local_commit_id" != "$cloned_commit_id" ]]; then
     echo "source commit ID does not match" >&2
@@ -46,6 +47,7 @@ cd "$PYPY_SRC"
 git submodule update --init --recursive --depth=1
 cd "pypy/goal"
 
+echo "### Building Pypy - stage 1"
 PYPY="${PYPY_BIN}/bin/pypy"
 
 # --gc=incminimark here is required for the cpyext (or whatever it is, the
@@ -58,14 +60,17 @@ PYPY="${PYPY_BIN}/bin/pypy"
 
 cd "${PYPY_SRC}/pypy/tool/release"
 
+echo "### Building Pypy - stage 2"
+mkdir "$PYPY_BUILD"
 "${PYPY}" package.py \
     --without-_tkinter \
     --no-keep-debug \
     --archive-name "$PACKAGE" \
     --builddir "$PYPY_BUILD"
 
-find "/tmp/pypy-build" -type f -iname '*.so' -exec strip -s {} \;
-find "/tmp/pypy-build" -type f -iname '*.so' -exec upx-ucl --best {} \;
+echo "### Minimizing so files"
+find "$PYPY_BUILD" -type f -iname '*.so' -exec strip -s {} \;
+find "$PYPY_BUILD" -type f -iname '*.so' -exec upx-ucl --best {} \;
 
 # result is "/tmp/pypy-build/pypy-turnkeylinux" there is a .tar.bz2 file there
 # I forgot to remove but that DOES NOT include the stripped & packed binaries,
