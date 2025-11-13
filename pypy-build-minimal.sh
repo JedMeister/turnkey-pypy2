@@ -1,0 +1,24 @@
+#!/bin/bash -eu
+
+PYPY_BUILT="$PWD/pypy-build"
+PYPY_FULL="$PYPY_BUILT/tklbam-pypy2"
+PYPY_MIN="$PYPY_BUILT/tklbam-pypy2-min"
+
+echo "### Creating hardlinked file tree for minimal package"
+cp -lr "$PYPY_FULL" "$PYPY_MIN"
+
+UNNEEDED=( "sqlite3" "lib-tk" "idlelib" "email" "test" "tests" )
+# if we decide that we want/need to keep 'idlelib', swap it for 'idle_test'
+
+echo "### Removing files/libraries for minimal package"
+for to_rm in "${UNNEEDED[@]}"; do
+    readarray -t found <<<"$(find pypy-build/tklbam-pypy2-min/ -type d -name "$to_rm")"
+    for dir in "${found[@]}"; do
+        if [[ -n "$dir" ]]; then
+            echo "### - removing $dir"
+            rm -r "$dir"
+        else
+            echo "*** error: no result for $to_rm - skipping..." >&2
+        fi
+    done
+done
