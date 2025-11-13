@@ -5,7 +5,7 @@ source pypy-versions.txt
 # PYPY_MAJOR_VERSION
 # PYPY_BUILD_DEP_VERSION
 
-PACKAGE="tklbam-pypy2"
+PACKAGE="tklbam-pypy2-full"
 
 PYPY_REPO="https://github.com/pypy/pypy"
 PYPY_BRANCH="release-pypy2.7-v${PYPY_MAJOR_VERSION}.x"
@@ -70,6 +70,7 @@ EOF
 mkdir "$PYPY_BUILD"
 "${PYPY}" package.py \
     --without-_tkinter \
+    --without-sqlite3 \
     --no-keep-debug \
     --archive-name "$PACKAGE" \
     --builddir "$PYPY_BUILD"

@@ -15,7 +15,6 @@ Build-Depends:
  libncurses-dev,
  libbz2-dev,
  libssl-dev,
- libsqlite3-dev,
  libgdbm-dev,
  binutils,
  upx-ucl,
