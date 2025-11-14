@@ -15,7 +15,7 @@ UNNEEDED=( "lib-tk" "idlelib" "email" "test" "tests" )
 echo "### Removing files/libraries for minimal package"
 for to_rm in "${UNNEEDED[@]}"; do
     readarray -t found <<< \
-        "$(find pypy-build/tklbam-pypy2-min/ -type d -name "$to_rm")"
+        "$(find "$PYPY_MIN" -type d -name "$to_rm")"
     for dir in "${found[@]}"; do
         if [[ -n "$dir" ]]; then
             echo "### - removing $dir"
