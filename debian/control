@@ -28,7 +28,6 @@ Package: turnkey-pypy2
 Architecture: any
 Depends:
  libssl3t64,
- ${misc:Depends},
 Breaks: turnkey-pypy2-full
 Replaces: turnkey-pypy2-full
 Description: Pypy2 python runtime for use by TKLBAM (trimmed)
@@ -42,7 +41,6 @@ Package: turnkey-pypy2-full
 Architecture: any
 Depends:
  libssl3t64,
- ${misc:Depends},
 Breaks: turnkey-pypy2
 Replaces: turnkey-pypy2
 Description: Pypy2 python runtime for use by TKLBAM (full)
