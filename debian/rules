@@ -8,18 +8,16 @@ export TMP=debian/tmp
 
 execute_before_dh_clean:
 	# dh_clean will clean all other build files (in debian/tmp)
-	#rm -rf pypy-src
-	#rm -rf pypy-bin
-	#rm -rf pypy-build
-	echo "temp: $(TMP)"
+	rm -rf pypy-src
+	rm -rf pypy-bin
+	rm -rf pypy-build
 
 override_dh_auto_build:
-	#./pypy-build.sh
-	#./pypy-build-minimal.sh
-	./pypy-test.sh
+	./pypy-build.sh
+	./pypy-build-minimal.sh
 	mkdir -p $(TMP)
 	cp -R pypy-build/tklbam-pypy2* $(TMP)/
-	ls -l $(TMP)
 
 override_dh_strip:
 	# nothing to do - build process already strips...
+	# Note: this override MUST exist or dh_strip will fail!
