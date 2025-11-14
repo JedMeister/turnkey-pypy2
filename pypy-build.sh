@@ -50,7 +50,9 @@ cat <<EOF
 ### Building Pypy - stage 1 ###
 ###############################
 EOF
+
 PYPY="${PYPY_BIN}/bin/pypy"
+export LD_LIBRARY_PATH="${PYPY_BIN}/bin"
 
 # --gc=incminimark here is required for the cpyext (or whatever it is, the
 #   thing required for linking C against it) to work.
