@@ -9,11 +9,15 @@ source pypy-versions.txt
 PYPY_SOURCE_V="pypy$PYTHON_VERSION-v${PYPY_MAJOR_VERSION}.x"
 PYPY_PREBUILT="pypy$PYTHON_VERSION-v${PYPY_BUILD_DEP_VERSION}"
 
-BASE_DIR="$(pwd)"
+# ignore shellcheck warning here because there will only ever be one dir like
+# this when working in a clean buildroot
+# shellcheck disable=SC2125
+BASE_DIR="$HOME/turnkey-pypy2-"*
+
 BUILD_ROOT="$BASE_DIR/build"
-PYPY_SRC="${BUILD_ROOT}/pypy-src"
-PYPY_BIN="${BUILD_ROOT}/pypy-bin"
-PYPY_BUILD="${BUILD_ROOT}/pypy-build"
+PYPY_SRC="$BUILD_ROOT/pypy-src"
+PYPY_BIN="$BUILD_ROOT/pypy-bin"
+PYPY_BUILD="$BUILD_ROOT/pypy-build"
 
 fatal() { echo "FATAL: $*" >&2; exit 1; }
 info() {
@@ -27,7 +31,7 @@ info() {
     echo
 }
 
-mkdir -p "${BUILD_ROOT}"
+mkdir -p "${BUILD_ROOT}" 
 
 info "### Cloning and verifying source ###"
 
@@ -71,6 +75,8 @@ cd "$PYPY_SRC"
 git submodule update --init --recursive --depth=1
 cd "pypy/goal"
 
+echo "done..."
+
 info "### Building PyPy package source - stage 1 - common ###"
 
 PYPY="${PYPY_BIN}/bin/pypy"
@@ -83,6 +89,7 @@ export LD_LIBRARY_PATH="${PYPY_BIN}/bin"
     --gc=incminimark \
     -Osize targetpypystandalone
 
+ls -la /tmp/usession-release-pypy2.7-v7.3.20-0/
 cd "${PYPY_SRC}/pypy/tool/release"
 
 for build in dbg full; do
@@ -98,17 +105,19 @@ for build in dbg full; do
 
     info "### Building PyPy package source - stage $x - $package_name ###"
 
-    "${PYPY}" package.py "${build_args[@]}" \
-        --archive-name "$package_name" \
-        --builddir "$PYPY_BUILD/$build"
+    build_args+=(--archive-name "$package_name" --builddir "$PYPY_BUILD/$build")
+    echo "- building with: $PYPY package.py ${build_args[*]}"
+    "$PYPY" package.py "${build_args[@]}"
 
     if [[ "$build" == "full" ]]; then
         echo "### Minimizing so files ###"
         find "$PYPY_BUILD/full" -type f -iname '*.so' -exec strip -s {} \;
         find "$PYPY_BUILD/full" -type f -iname '*.so' -exec upx-ucl --best {} \;
     fi
-    mv "$PYPY_BUILD/$build/$package_name" "$BASE_DIR/"
+    #mv "$PYPY_BUILD/$build/$package_name" "$BASE_DIR/"
+    #rm -rf "$PYPY_TMP"
 done
+exit 1
 
 info "### Building PyPy package source - stage 4 - tklbam-pypy2 (minimal) ###"
 package_name=tklbam-pypy2  # name of minimal package
