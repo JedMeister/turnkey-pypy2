@@ -9,15 +9,10 @@ source pypy-versions.txt
 PYPY_SOURCE_V="pypy$PYTHON_VERSION-v${PYPY_MAJOR_VERSION}.x"
 PYPY_PREBUILT="pypy$PYTHON_VERSION-v${PYPY_BUILD_DEP_VERSION}"
 
-# ignore shellcheck warning here because there will only ever be one dir like
-# this when working in a clean buildroot
-# shellcheck disable=SC2125
-BASE_DIR="$HOME/turnkey-pypy2-"*
-
-BUILD_ROOT="$BASE_DIR/build"
-PYPY_SRC="$BUILD_ROOT/pypy-src"
-PYPY_BIN="$BUILD_ROOT/pypy-bin"
-PYPY_BUILD="$BUILD_ROOT/pypy-build"
+BUILD_ROOT="$PWD/build"
+PYPY_SRC="$BUILD_ROOT/source"
+PYPY_BIN="$BUILD_ROOT/download"
+PYPY_BUILD="$BUILD_ROOT/local-build"
 
 fatal() { echo "FATAL: $*" >&2; exit 1; }
 info() {
@@ -30,6 +25,8 @@ info() {
     printf '%*s' "$len" | tr " " "#"
     echo
 }
+
+info "### Starting build; BUILD_ROOT=$BUILD_ROOT ###"
 
 mkdir -p "${BUILD_ROOT}" 
 
@@ -93,6 +90,8 @@ ls -la /tmp/usession-release-pypy2.7-v7.3.20-0/
 cd "${PYPY_SRC}/pypy/tool/release"
 
 for build in dbg full; do
+    rm -rf "${PYPY_BUILD:?}"
+    mkdir "$PYPY_BUILD"
     x=2
     package_name="tklbam-pypy2-$build"
     build_args=(--without-_tkinter --without-sqlite3)
@@ -100,28 +99,25 @@ for build in dbg full; do
         build_args+=(--no-keep-debug)
         x=3
     fi
-    rm -rf "${PYPY_BUILD:?}/*"
-    mkdir -p "$PYPY_BUILD/$build"
 
     info "### Building PyPy package source - stage $x - $package_name ###"
 
-    build_args+=(--archive-name "$package_name" --builddir "$PYPY_BUILD/$build")
-    echo "- building with: $PYPY package.py ${build_args[*]}"
+    build_args+=(--archive-name "$package_name" --builddir "$PYPY_BUILD")
+    echo "- build command: $PYPY package.py ${build_args[*]}"
     "$PYPY" package.py "${build_args[@]}"
 
     if [[ "$build" == "full" ]]; then
         echo "### Minimizing so files ###"
-        find "$PYPY_BUILD/full" -type f -iname '*.so' -exec strip -s {} \;
-        find "$PYPY_BUILD/full" -type f -iname '*.so' -exec upx-ucl --best {} \;
+        find "$PYPY_BUILD" -type f -iname '*.so' -exec strip -s {} \;
+        find "$PYPY_BUILD" -type f -iname '*.so' -exec upx-ucl --best {} \;
     fi
-    #mv "$PYPY_BUILD/$build/$package_name" "$BASE_DIR/"
-    #rm -rf "$PYPY_TMP"
+    echo "- moving $PYPY_BUILD/$package_name to $BUILD_ROOT/"
+    mv "$PYPY_BUILD/$package_name" "$BUILD_ROOT/"
 done
-exit 1
 
 info "### Building PyPy package source - stage 4 - tklbam-pypy2 (minimal) ###"
 package_name=tklbam-pypy2  # name of minimal package
-pkg_src_path="$BASE_DIR/$package_name"
+pkg_src_path="$BUILD_ROOT/$package_name"
 
 # create tree of hardlinked files
 cp -lr "$pkg_src_path-full" "$pkg_src_path"
@@ -134,7 +130,7 @@ to_remove=( "lib-tk" "idlelib" "email" "test" "tests" )
 echo -e "\n# removing libraries: ${to_remove[*]}\n"
 for to_rm in "${to_remove[@]}"; do
     readarray -t found <<< \
-        "$(find "$" -type d -name "$to_rm")"
+        "$(find "$pkg_src_path" -type d -name "$to_rm")"
     for dir in "${found[@]}"; do
         if [[ -n "$dir" ]]; then
             echo "# - removing $dir"
