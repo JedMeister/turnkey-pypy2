@@ -46,8 +46,10 @@ info "### Downloading and verifying pre-built binary archive ###"
 
 case $(dpkg --print-architecture) in
     amd64)
+        read -ra local_checksum < checksum-amd64.txt
         pypy_arch="linux64";;
     arm64)
+        read -ra local_checksum < checksum-arm64.txt
         pypy_arch="aarch64";;
     *)
         fatal "host architecture unsupported";;
@@ -57,7 +59,6 @@ pypy_url="https://downloads.python.org/pypy"
 pypy_tarball="${PYPY_PREBUILT}-${pypy_arch}.tar.bz2"
 pypy_release_url="${pypy_url}/${pypy_tarball}"
 curl "$pypy_release_url" -o pypy-bin.tar.bz2
-read -ra local_checksum < checksum.txt
 read -ra dl_checksum <<<"$(sha256sum pypy-bin.tar.bz2)"
 if [[ "${local_checksum[*]}" != "${dl_checksum[*]}" ]]; then
     fatal "Checksums for pypy-bin.tar.bz2 do not match"
