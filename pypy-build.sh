@@ -9,7 +9,8 @@ source pypy-versions.txt
 PYPY_SOURCE_V="pypy$PYTHON_VERSION-v${PYPY_MAJOR_VERSION}.x"
 PYPY_PREBUILT="pypy$PYTHON_VERSION-v${PYPY_BUILD_DEP_VERSION}"
 
-BUILD_ROOT="$(pwd)/build"
+BASE_DIR="$(pwd)"
+BUILD_ROOT="$BASE_DIR/build"
 PYPY_SRC="${BUILD_ROOT}/pypy-src"
 PYPY_BIN="${BUILD_ROOT}/pypy-bin"
 PYPY_BUILD="${BUILD_ROOT}/pypy-build"
@@ -25,6 +26,8 @@ info() {
     printf '%*s' "$len" | tr " " "#"
     echo
 }
+
+mkdir -p "${BUILD_ROOT}"
 
 info "### Cloning and verifying source ###"
 
@@ -108,8 +111,10 @@ for build in dbg full; do
 done
 
 info "### Building PyPy package source - stage 4 - tklbam-pypy2 (minimal) ###"
-package_name=tklbam-pypy2
+package_name=tklbam-pypy2  # name of minimal package
 pkg_src_path="$BASE_DIR/$package_name"
+
+# create tree of hardlinked files
 cp -lr "$pkg_src_path-full" "$pkg_src_path"
 
 # there may be more to remove, e.g. non linux platform (plat-*) lib
