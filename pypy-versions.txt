@@ -1,7 +1,12 @@
-# update these values as required
+# Sourced by pypy-build.sh script
+# Update these values as required
 
-# pypy2.7 major release version to download, compile and include in package.
+export PYTHON_VERSION="2.7"
+
+# pypy2.x major release version to download, compile and include in package.
 export PYPY_MAJOR_VERSION="7"
 
-# precompiled pypy2.7 release to download & use as a build dependency
+# precompiled pypy2.x release to download & use as a build dependency
 export PYPY_BUILD_DEP_VERSION="7.3.20"
+
+# vim:ft=bash

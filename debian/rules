@@ -11,13 +11,14 @@ execute_before_dh_clean:
 	rm -rf pypy-src
 	rm -rf pypy-bin
 	rm -rf pypy-build
+	rm -rf tklbam-pypy2*
 
 override_dh_auto_build:
 	./pypy-build.sh
-	./pypy-build-minimal.sh
 	mkdir -p $(TMP)
-	cp -R pypy-build/tklbam-pypy2* $(TMP)/
+	mv tklbam-pypy2* $(TMP)/
 
 override_dh_strip:
 	# nothing to do - build process already strips...
-	# Note: this override MUST exist or dh_strip will fail!
+	# Note: this override MUST exist or dh_strip will fail for tklbam-pypy2 &
+	# tklbam-pypy2-full; and it will strip tklbam-pypy2-dbg!

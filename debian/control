@@ -26,27 +26,50 @@ Standards-Version: 4.0.0
 
 Package: turnkey-pypy2
 Architecture: any
-Depends:
- libssl3t64,
-Breaks: turnkey-pypy2-full
-Replaces: turnkey-pypy2-full
-Description: Pypy2 python runtime for use by TKLBAM (trimmed)
- A "trimmed" version of the pypy2 runtime for TKLBAM. This should
+Depends: libssl3t64
+Breaks: turnkey-pypy2-full, turnkey-pypy2-dbg
+Replaces: turnkey-pypy2-full, turnkey-pypy2-dbg
+Description: PyPy2 python runtime for use by TKLBAM (minimal)
+ A "minimal" version of the pypy2 runtime for TKLBAM. This should
  provide full TKLBAM functionality.
  .
- If TKLBAM problems arise please install 'turnkey-pypy2-full' and
- retry. Please report TKLBAM issues to TurnKey Linux regardless.
+ If problems occur, please report to TurnKey. Please also try
+ installing the 'turnkey-pypy2-full' and retry. If that does
+ resolve the problem, please also report that to TurnKey.
 
 Package: turnkey-pypy2-full
 Architecture: any
-Depends:
- libssl3t64,
-Breaks: turnkey-pypy2
-Replaces: turnkey-pypy2
-Description: Pypy2 python runtime for use by TKLBAM (full)
+Depends: libssl3t64
+Breaks: turnkey-pypy2, turnkey-pypy2-dbg
+Replaces: turnkey-pypy2, turnkey-pypy2-dbg
+Description: PyPy2 python runtime for use by TKLBAM (full)
  The "full" version of the pypy2 runtime for TKLBAM. This package
  should not be required and is only provided in case edge case
- tklbam issues occur using the "trimmed" 'turnkey-pypy2' package.
+ TKLBAM issues occur using the "minimal" 'turnkey-pypy2' package.
  .
  If TKLBAM does not function properly without this package, please
  report to TurnKey.
+ .
+ This package is the same as 'turnkey-pypy2' but with nothing
+ removed post compilation.
+ .
+ Experienced developers debugging advanced low level issues may
+ wish to install 'turnkey-pypy2-dbg' instead of this package.
+ 
+Package: turnkey-pypy2-dbg
+Architecture: any
+Depends: libssl3t64
+Breaks: turnkey-pypy2, turnkey-pypy2-full
+Replaces: turnkey-pypy2, turnkey-pypy2-full
+Description: PyPy2 python runtime for use by TKLBAM (debug)
+ This build of PyPy2 is only intended for experienced developers
+ who wish to debug advanced low level python2 issues.
+ .
+ This package should generally not be installed. 'turnkey-pypy2' is
+ the preferred package; or 'turnkey-pypy2-full' if experiencing TKLBAM
+ issues. The exceptions are if you know what you are doing or are
+ explictly asked to install it by someone providing support.
+ .
+ This package is built from the same source as the other turnkey-pypy2
+ packages but is built without the '--no-keep-debug' switch. Also the
+ resulting binaries are not stripped or compressed.
