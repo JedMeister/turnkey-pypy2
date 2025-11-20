@@ -33,10 +33,10 @@ info "### Cloning and verifying source ###"
 
 pypy_repo="https://github.com/pypy/pypy"
 pypy_branch="release-$PYPY_SOURCE_V"
-git clone --depth=1 "${pypy_repo}" -b "${pypy_branch}" pypy-src
+git clone --depth=1 "${pypy_repo}" -b "${pypy_branch}" "$PYPY_SRC"
 read -r local_commit_id < src-commit-id.txt
 
-cloned_commit_id=$(git --git-dir=pypy-src/.git rev-parse HEAD)
+cloned_commit_id=$(git --git-dir="$PYPY_SRC"/.git rev-parse HEAD)
 if [[ "$local_commit_id" != "$cloned_commit_id" ]]; then
     fatal "source commit ID does not match"
 fi
