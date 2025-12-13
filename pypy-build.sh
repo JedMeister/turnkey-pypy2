@@ -125,7 +125,30 @@ cp -lr "$pkg_src_path-full" "$pkg_src_path"
 
 # there may be more to remove, e.g. non linux platform (plat-*) lib
 # but beyond these it gets risky... even removing lib-tk may not be ideal?!
-to_remove=( "lib-tk" "idlelib" "email" "test" "tests" )
+to_remove=(
+    "idlelib"
+    "test"
+    "tests"
+    "plat-aix3"
+    "plat-aix4"
+    "plat-atheos"
+    "plat-beos5"
+    "plat-darwin"
+    "plat-freebsd4"
+    "plat-freebsd5"
+    "plat-freebsd6"
+    "plat-freebsd7"
+    "plat-freebsd8"
+    "plat-irix5"
+    "plat-irix6"
+    "plat-mac"
+    "plat-netbsd1"
+    "plat-next3"
+    "plat-os2emx"
+    "plat-riscos"
+    "plat-sunos5"
+    "plat-unixware7"
+)
 # if we want/need to keep 'idlelib', swap it for 'idle_test'
 
 echo -e "\n# removing libraries: ${to_remove[*]}\n"
