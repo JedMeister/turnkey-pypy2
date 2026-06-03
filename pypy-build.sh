@@ -87,7 +87,7 @@ export LD_LIBRARY_PATH="${PYPY_BIN}/bin"
     --gc=incminimark \
     -Osize targetpypystandalone
 
-ls -la /tmp/usession-release-pypy2.7-v7.3.20-0/
+ls -la "/tmp/usession-release-pypy2.7-v${PYPY_BUILD_DEP_VERSION}-0"
 cd "${PYPY_SRC}/pypy/tool/release"
 
 for build in dbg full; do
