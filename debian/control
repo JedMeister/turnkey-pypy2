@@ -9,7 +9,7 @@ Build-Depends:
  debhelper (>= 10),
  gcc,
  libffi-dev,
- pkgconf,
+ pkg-config,
  libexpat1-dev,
  zlib1g-dev,
  libncurses-dev,
@@ -23,6 +23,7 @@ Homepage: https://pypy.org/
 Vcs-Browser: https://github.com/turnkeylinux/turnkey-pypy2
 Vcs-Git: https://github.com/turnkeylinux/turnkey-pypy2.git
 Standards-Version: 4.0.0
+Rules-Requires-Root: binary-targets
 
 Package: turnkey-pypy2
 Architecture: any
